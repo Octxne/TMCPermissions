@@ -16,6 +16,22 @@ public class PermissionsManager
 		return RanksFile.getFile().getConfiguration().getStringList("tmcpermissions.ranks." + name + ".permissions");
 	}
 	
+	public static void addPermission(String permission, String name)
+	{
+		getRankPermissions(name).add(permission);
+		
+		RanksFile.getFile().getConfiguration().set("tmcpermissions.ranks." + name + ".permissions", getRankPermissions(name));
+		RanksFile.getFile().saveConfiguration();
+	}
+	
+	public static void removePermission(String permission, String name)
+	{
+		getRankPermissions(name).remove(permission);
+		
+		RanksFile.getFile().getConfiguration().set("tmcpermissions.ranks." + name + ".permissions", getRankPermissions(name));
+		RanksFile.getFile().saveConfiguration();
+	}
+	
 	public static void updatePermissions()
 	{
 		for (Player player : Bukkit.getServer().getOnlinePlayers())
@@ -36,7 +52,7 @@ public class PermissionsManager
 		}
 	}
 	
-	public static void removePermission(String permission)
+	public static void unsetPermission(String permission)
 	{
 		for (Player player : Bukkit.getServer().getOnlinePlayers())
 		{

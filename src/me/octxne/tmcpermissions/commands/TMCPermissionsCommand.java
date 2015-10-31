@@ -8,7 +8,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.octxne.tmcpermissions.core.Permissions;
-import me.octxne.tmcpermissions.core.file.files.RanksFile;
 import me.octxne.tmcpermissions.core.managers.PermissionsManager;
 import me.octxne.tmcpermissions.core.managers.RankManager;
 import me.octxne.tmcpermissions.utilities.Messages;
@@ -155,11 +154,7 @@ public class TMCPermissionsCommand implements CommandExecutor
 								}
 								else
 								{
-									PermissionsManager.getRankPermissions(arguments[2]).add(arguments[3]);
-									
-									RanksFile.getFile().getConfiguration().set("tmcpermissions.ranks." + arguments[2] + ".permissions", PermissionsManager.getRankPermissions(arguments[2]));
-									RanksFile.getFile().saveConfiguration();
-									
+									PermissionsManager.addPermission(arguments[3], arguments[2]);
 									PermissionsManager.updatePermissions();
 									
 									player.sendMessage(ChatColor.GRAY + "You have " + ChatColor.GREEN + "added " + ChatColor.GRAY + "the following permission to rank" + RankManager.getRankColor(arguments[2]) + ChatColor.DARK_GRAY + ": " + ChatColor.YELLOW + arguments[3]);
@@ -190,12 +185,8 @@ public class TMCPermissionsCommand implements CommandExecutor
 								}
 								else
 								{
-									PermissionsManager.removePermission(arguments[3]);
-									
-									PermissionsManager.getRankPermissions(arguments[2]).remove(arguments[3]);
-									
-									RanksFile.getFile().getConfiguration().set("tmcpermissions.ranks." + arguments[2] + ".permissions", PermissionsManager.getRankPermissions(arguments[2]));
-									RanksFile.getFile().saveConfiguration();
+									PermissionsManager.unsetPermission(arguments[3]);
+									PermissionsManager.removePermission(arguments[2], arguments[2]);
 									
 									player.sendMessage(ChatColor.GRAY + "You have " + ChatColor.RED + "removed " + ChatColor.GRAY + "the following permission to rank" + RankManager.getRankColor(arguments[2]) + ChatColor.DARK_GRAY + ": " + ChatColor.YELLOW + arguments[3]);
 								}
