@@ -55,8 +55,8 @@ public class RankManager
 	
 	public static void setPlayerRank(Player player, String name)
 	{
-		PlayersFile.getFile().getConfiguration().set("tmcplayers.players." + player.getUniqueId() + ".rank", name);
-		PlayersFile.getFile().getConfiguration().set("tmcplayers.players." + player.getUniqueId() + ".name", player.getName());
+		PlayersFile.getFile().getConfiguration().set("tmcpermissions.players." + player.getUniqueId() + ".rank", name);
+		PlayersFile.getFile().getConfiguration().set("tmcpermissions.players." + player.getUniqueId() + ".name", player.getName());
 		PlayersFile.getFile().saveConfiguration();
 	}
 	

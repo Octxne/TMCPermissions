@@ -166,7 +166,7 @@ public class TMCPermissionsCommand implements CommandExecutor
 									
 									PermissionsManager.updatePermissions();
 									
-									player.sendMessage(ChatColor.GRAY + "You have " + ChatColor.GREEN + "added " + ChatColor.GRAY + "the following permission to rank " + RankManager.getRankColor(arguments[2]) + ChatColor.DARK_GRAY + ": " + ChatColor.YELLOW + arguments[3]);
+									player.sendMessage(ChatColor.GRAY + "You have " + ChatColor.GREEN + "added " + ChatColor.GRAY + "the following permission to rank" + RankManager.getRankColor(arguments[2]) + ChatColor.DARK_GRAY + ": " + ChatColor.YELLOW + arguments[3]);
 								}
 							}
 							else
@@ -203,7 +203,7 @@ public class TMCPermissionsCommand implements CommandExecutor
 									RanksFile.getFile().getConfiguration().set("tmcpermissions.ranks." + arguments[2] + ".permissions", permissions);
 									RanksFile.getFile().saveConfiguration();
 									
-									player.sendMessage(ChatColor.GRAY + "You have " + ChatColor.GREEN + "added " + ChatColor.GRAY + "the following permission to rank " + RankManager.getRankColor(arguments[2]) + ChatColor.DARK_GRAY + ": " + ChatColor.YELLOW + arguments[3]);
+									player.sendMessage(ChatColor.GRAY + "You have " + ChatColor.RED + "removed " + ChatColor.GRAY + "the following permission to rank" + RankManager.getRankColor(arguments[2]) + ChatColor.DARK_GRAY + ": " + ChatColor.YELLOW + arguments[3]);
 								}
 							}
 							else

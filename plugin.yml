@@ -3,3 +3,7 @@ version: 0.1
 main: me.octxne.tmcpermissions.core.TMCPermissions
 author: Octxne
 description: TMCPermissions is a permissions plugin developed by Octxne for a server called TMCNetwork.
+
+commands:
+  tmcpermissions:
+    aliases: [ranks, rank]

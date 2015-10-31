@@ -6,6 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import me.octxne.tmcpermissions.commands.TMCPermissionsCommand;
 import me.octxne.tmcpermissions.core.file.files.ConfigurationFile;
+import me.octxne.tmcpermissions.core.file.files.RanksFile;
 import me.octxne.tmcpermissions.core.managers.PermissionsManager;
 import me.octxne.tmcpermissions.core.managers.RankManager;
 import me.octxne.tmcpermissions.listeners.AsyncPlayerChatListener;
@@ -124,5 +125,6 @@ public class TMCPermissions extends JavaPlugin
 	private void setupFiles()
 	{
 		ConfigurationFile.loadDefaults();
+		RanksFile.loadDefaults();
 	}
 }
