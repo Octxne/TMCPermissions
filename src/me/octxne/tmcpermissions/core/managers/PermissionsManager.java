@@ -22,7 +22,7 @@ public class PermissionsManager
 		{
 			try
 			{
-				for (String permissions : getRankPermissions(RankManager.getPlayerRank(player).toLowerCase()))
+				for (String permissions : getRankPermissions(RankManager.getPlayerRank(player)))
 				{
 					PermissionAttachment attachment = player.addAttachment(TMCPermissions.getInstance());
 						

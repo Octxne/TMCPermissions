@@ -48,6 +48,11 @@ public class RankManager
 		RanksFile.getFile().saveConfiguration();
 	}
 	
+	public static boolean rankExists(String name)
+	{
+		return RanksFile.getFile().getConfiguration().contains("tmcpermissions.ranks." + name);
+	}
+	
 	public static void setPlayerRank(Player player, String name)
 	{
 		PlayersFile.getFile().getConfiguration().set("tmcplayers.players." + player.getUniqueId() + ".rank", name);
@@ -63,6 +68,12 @@ public class RankManager
 				setPlayerRank(player, getDefaultRank());
 			}
 		}
+	}
+	
+	public static void setRankColor(String name, String color)
+	{
+		RanksFile.getFile().getConfiguration().set("tmcpermissions.ranks." + name + ".color", color);
+		RanksFile.getFile().saveConfiguration();
 	}
 	
 	public static void setDefaultRank(String name)
