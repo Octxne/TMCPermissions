@@ -1,5 +1,7 @@
 package me.octxne.tmcpermissions.commands;
 
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -8,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.octxne.tmcpermissions.core.Permissions;
+import me.octxne.tmcpermissions.core.file.files.RanksFile;
 import me.octxne.tmcpermissions.core.managers.PermissionsManager;
 import me.octxne.tmcpermissions.core.managers.RankManager;
 import me.octxne.tmcpermissions.utilities.Messages;
@@ -24,9 +27,29 @@ public class TMCPermissionsCommand implements CommandExecutor
 		{
 			Player player = (Player) sender;
 			
-			if (arguments.length == 0 || arguments.length > 4)
+			if (arguments.length > 4)
 			{
-				Messages.usage(player, "/tmcpermissions <player>\n/tmcpermissions set <player> <rank>\n/tmcpermissions add permission <rank> <permission>\n/tmcpermissions remove permission <rank> <permission>\n/tmcpermissions add <rank>\n/tmcpermissions remove <rank>\n/tmcpermissions set default <rank>\n/tmcpermissions set default color <color>\n/tmcpermissions set color <rank>");
+				Messages.usage(player, "/tmcpermissions\n/tmcpermissions <player>\n/tmcpermissions set <player> <rank>\n/tmcpermissions permissions <rank>\n/tmcpermissions add permission <rank> <permission>\n/tmcpermissions remove permission <rank> <permission>\n/tmcpermissions add <rank>\n/tmcpermissions remove <rank>\n/tmcpermissions set default <rank>\n/tmcpermissions set default color <color>\n/tmcpermissions set color <rank>");
+			}
+			else if (arguments.length == 0)
+			{
+				if (RanksFile.getFile().getConfiguration().contains("tmcpermissions.ranks"))
+				{
+					StringBuilder builder = new StringBuilder();
+					
+					for (String rank : RanksFile.getFile().getConfiguration().getConfigurationSection("tmcpermissions.ranks").getKeys(false))
+					{
+						builder.append(rank).append("\n");
+					}
+					
+					String ranks = builder.toString();
+					
+					player.sendMessage(ChatColor.GRAY + "Available ranks" + ChatColor.DARK_GRAY + ":\n" + ChatColor.RED + ranks);
+				}
+				else
+				{
+					player.sendMessage(ChatColor.RED + "There are no ranks!");
+				}
 			}
 			else if (arguments.length == 1)
 			{
@@ -90,6 +113,39 @@ public class TMCPermissionsCommand implements CommandExecutor
 						Messages.insufficientPermissions(player);
 					}
 				}
+				else if (arguments[0].equalsIgnoreCase("permissions"))
+				{
+					if (RankManager.rankExists(arguments[1]))
+					{
+						if (RanksFile.getFile().getConfiguration().contains("tmcpermissions.ranks." + arguments[1] + ".permissions"))
+						{
+							List<String> permissions = RanksFile.getFile().getConfiguration().getStringList("tmcpermissions.ranks." + arguments[1] + ".permissions");
+							
+							StringBuilder builder = new StringBuilder();
+							
+							for (String permission : permissions)
+							{
+								builder.append(permission).append("\n");
+							}
+							
+							String rankPermissions = builder.toString();
+							
+							player.sendMessage(ChatColor.GRAY + "Rank " + RankManager.getRankColor(arguments[1]) + arguments[1] + ChatColor.GRAY + " has the following permissions" + ChatColor.DARK_GRAY + ":\n" + ChatColor.YELLOW + rankPermissions);
+						}
+						else
+						{
+							player.sendMessage(ChatColor.RED + "Rank " + arguments[1] + " does not have any permissions!");
+						}
+					}
+					else
+					{
+						player.sendMessage(ChatColor.RED + "Rank " + arguments[1] + " does not exist!");
+					}
+				}
+				else
+				{
+					Messages.usage(player, "/tmcpermissions\n/tmcpermissions <player>\n/tmcpermissions set <player> <rank>\n/tmcpermissions permissions <rank>\n/tmcpermissions add permission <rank> <permission>\n/tmcpermissions remove permission <rank> <permission>\n/tmcpermissions add <rank>\n/tmcpermissions remove <rank>\n/tmcpermissions set default <rank>\n/tmcpermissions set default color <color>\n/tmcpermissions set color <rank>");
+				}
 			}
 			else if (arguments.length == 3)
 			{
@@ -135,11 +191,13 @@ public class TMCPermissionsCommand implements CommandExecutor
 				}
 				else
 				{
-					Messages.usage(player, "/tmcpermissions <player>\n/tmcpermissions set <player> <rank>\n/tmcpermissions add permission <rank> <permission>\n/tmcpermissions remove permission <rank> <permission>\n/tmcpermissions add <rank>\n/tmcpermissions remove <rank>\n/tmcpermissions set default <rank>\n/tmcpermissions set default color <color>\n/tmcpermissions set color <rank>");
+					Messages.usage(player, "/tmcpermissions\n/tmcpermissions <player>\n/tmcpermissions set <player> <rank>\n/tmcpermissions permissions <rank>\n/tmcpermissions add permission <rank> <permission>\n/tmcpermissions remove permission <rank> <permission>\n/tmcpermissions add <rank>\n/tmcpermissions remove <rank>\n/tmcpermissions set default <rank>\n/tmcpermissions set default color <color>\n/tmcpermissions set color <rank>");
 				}
 			}
 			else if (arguments.length == 4)
 			{
+				List<String> permissions = RanksFile.getFile().getConfiguration().getStringList("tmcpermissions.ranks." + arguments[2] + ".permissions");
+				
 				if (arguments[0].equalsIgnoreCase("add"))
 				{
 					if (arguments[1].equalsIgnoreCase("permission"))
@@ -148,13 +206,17 @@ public class TMCPermissionsCommand implements CommandExecutor
 						{
 							if (RankManager.rankExists(arguments[2]))
 							{
-								if (PermissionsManager.getRankPermissions(arguments[2]).contains(arguments[3]))
+								if (permissions.contains(arguments[3]))
 								{
 									player.sendMessage(ChatColor.RED + "Rank " + arguments[2] + " already has the following permission: " + arguments[3]);
 								}
 								else
 								{
-									PermissionsManager.addPermission(arguments[3], arguments[2]);
+									permissions.add(arguments[3]);
+									
+									RanksFile.getFile().getConfiguration().set("tmcpermissions.ranks." + arguments[2] + ".permissions", permissions);
+									RanksFile.getFile().saveConfiguration();
+									
 									PermissionsManager.updatePermissions();
 									
 									player.sendMessage(ChatColor.GRAY + "You have " + ChatColor.GREEN + "added " + ChatColor.GRAY + "the following permission to rank" + RankManager.getRankColor(arguments[2]) + ChatColor.DARK_GRAY + ": " + ChatColor.YELLOW + arguments[3]);
@@ -179,14 +241,18 @@ public class TMCPermissionsCommand implements CommandExecutor
 						{
 							if (RankManager.rankExists(arguments[2]))
 							{
-								if (!PermissionsManager.getRankPermissions(arguments[2]).contains(arguments[3]))
+								if (!permissions.contains(arguments[3]))
 								{
 									player.sendMessage(ChatColor.RED + "Rank " + arguments[2] + " does not have the following permission: " + arguments[3]);
 								}
 								else
 								{
 									PermissionsManager.unsetPermission(arguments[3]);
-									PermissionsManager.removePermission(arguments[2], arguments[2]);
+									
+									permissions.remove(arguments[3]);
+									
+									RanksFile.getFile().getConfiguration().set("tmcpermissions.ranks." + arguments[2] + ".permissions", permissions);
+									RanksFile.getFile().saveConfiguration();
 									
 									player.sendMessage(ChatColor.GRAY + "You have " + ChatColor.RED + "removed " + ChatColor.GRAY + "the following permission to rank" + RankManager.getRankColor(arguments[2]) + ChatColor.DARK_GRAY + ": " + ChatColor.YELLOW + arguments[3]);
 								}
@@ -228,12 +294,12 @@ public class TMCPermissionsCommand implements CommandExecutor
 					}
 					else
 					{
-						Messages.usage(player, "/tmcpermissions <player>\n/tmcpermissions set <player> <rank>\n/tmcpermissions add permission <rank> <permission>\n/tmcpermissions remove permission <rank> <permission>\n/tmcpermissions add <rank>\n/tmcpermissions remove <rank>\n/tmcpermissions set default <rank>\n/tmcpermissions set default color <color>\n/tmcpermissions set color <rank>");
+						Messages.usage(player, "/tmcpermissions\n/tmcpermissions <player>\n/tmcpermissions set <player> <rank>\n/tmcpermissions permissions <rank>\n/tmcpermissions add permission <rank> <permission>\n/tmcpermissions remove permission <rank> <permission>\n/tmcpermissions add <rank>\n/tmcpermissions remove <rank>\n/tmcpermissions set default <rank>\n/tmcpermissions set default color <color>\n/tmcpermissions set color <rank>");
 					}
 				}
 				else
 				{
-					Messages.usage(player, "/tmcpermissions <player>\n/tmcpermissions set <player> <rank>\n/tmcpermissions add permission <rank> <permission>\n/tmcpermissions remove permission <rank> <permission>\n/tmcpermissions add <rank>\n/tmcpermissions remove <rank>\n/tmcpermissions set default <rank>\n/tmcpermissions set default color <color>\n/tmcpermissions set color <rank>");
+					Messages.usage(player, "/tmcpermissions\n/tmcpermissions <player>\n/tmcpermissions set <player> <rank>\n/tmcpermissions permissions <rank>\n/tmcpermissions add permission <rank> <permission>\n/tmcpermissions remove permission <rank> <permission>\n/tmcpermissions add <rank>\n/tmcpermissions remove <rank>\n/tmcpermissions set default <rank>\n/tmcpermissions set default color <color>\n/tmcpermissions set color <rank>");
 				}
 			}
 		}
