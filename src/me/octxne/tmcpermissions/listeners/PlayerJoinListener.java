@@ -35,5 +35,10 @@ public class PlayerJoinListener implements Listener
 				PlayersFile.getFile().saveConfiguration();
 			}
 		}
+		else
+		{
+			PlayersFile.getFile().getConfiguration().set("tmcpermissions.players." + player.getUniqueId() + ".name", player.getName());
+			PlayersFile.getFile().saveConfiguration();
+		}
 	}
 }
