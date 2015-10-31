@@ -56,6 +56,7 @@ public class RankManager
 	public static void setPlayerRank(Player player, String name)
 	{
 		PlayersFile.getFile().getConfiguration().set("tmcplayers.players." + player.getUniqueId() + ".rank", name);
+		PlayersFile.getFile().getConfiguration().set("tmcplayers.players." + player.getUniqueId() + ".name", player.getName());
 		PlayersFile.getFile().saveConfiguration();
 	}
 	
@@ -90,7 +91,7 @@ public class RankManager
 	
 	public static boolean isRank(Player player, String name)
 	{
-		return PlayersFile.getFile().getConfiguration().getString("tmcpermissions.players." + player.getUniqueId() + ".rank") == name;
+		return PlayersFile.getFile().getConfiguration().getString("tmcpermissions.players." + player.getUniqueId() + ".rank").equals(name);
 	}
 	
 	public static boolean hasRank(Player player)

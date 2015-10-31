@@ -1,9 +1,15 @@
 package me.octxne.tmcpermissions.core;
 
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.octxne.tmcpermissions.commands.TMCPermissionsCommand;
 import me.octxne.tmcpermissions.core.file.files.ConfigurationFile;
+import me.octxne.tmcpermissions.core.managers.PermissionsManager;
+import me.octxne.tmcpermissions.core.managers.RankManager;
+import me.octxne.tmcpermissions.listeners.AsyncPlayerChatListener;
+import me.octxne.tmcpermissions.listeners.PlayerJoinListener;
 import me.octxne.tmcpermissions.utilities.Printer;
 import me.octxne.tmcpermissions.utilities.type.PrinterType;
 
@@ -23,7 +29,14 @@ public class TMCPermissions extends JavaPlugin
 		this.setPluginAuthor("Octxne");
 		this.setPluginVersion(0.1D);
 		this.registerCommands();
+		this.registerListeners();
 		this.setupFiles();
+		
+		RankManager.setUnconfiguredPlayerRanks();
+		RankManager.setupChat();
+		RankManager.setupPlayerList();
+		
+		PermissionsManager.updatePermissions();
 		
 		Printer.printToConsole("v" + this.getPluginVersion() + " developed by " + this.getPluginAuthor() + " has been enabled!", PrinterType.NORMAL);
 	}
@@ -92,9 +105,20 @@ public class TMCPermissions extends JavaPlugin
 		this.getCommand(name).setExecutor(executor);
 	}
 	
+	public void registerListener(Listener listener)
+	{
+		this.getServer().getPluginManager().registerEvents(listener, this);
+	}
+	
 	private void registerCommands()
 	{
-		
+		this.registerCommand("tmcpermissions", new TMCPermissionsCommand());
+	}
+	
+	private void registerListeners()
+	{
+		this.registerListener(new AsyncPlayerChatListener());
+		this.registerListener(new PlayerJoinListener());
 	}
 	
 	private void setupFiles()

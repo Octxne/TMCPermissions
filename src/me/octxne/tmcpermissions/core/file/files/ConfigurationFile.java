@@ -15,5 +15,8 @@ public class ConfigurationFile
 	public static void loadDefaults()
 	{
 		getFile().addDefault("tmcpermissions.settings.prefix", "[" + TMCPermissions.getInstance().getPluginName() + "]");
+		getFile().addDefault("tmcpermissions.settings.chat.splitter", "&8»");
+		getFile().addDefault("tmcpermissions.settings.defaultRank", "Default");
+		getFile().addDefault("tmcpermissions.settings.defaultRankColor", "&7");
 	}
 }
