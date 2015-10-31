@@ -1,7 +1,5 @@
 package me.octxne.tmcpermissions.commands;
 
-import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -151,17 +149,15 @@ public class TMCPermissionsCommand implements CommandExecutor
 						{
 							if (RankManager.rankExists(arguments[2]))
 							{
-								List<String> permissions = RanksFile.getFile().getConfiguration().getStringList("tmcpermissions.ranks." + arguments[2] + ".permissions");
-								
-								if (permissions.contains(arguments[3]))
+								if (PermissionsManager.getRankPermissions(arguments[2]).contains(arguments[3]))
 								{
 									player.sendMessage(ChatColor.RED + "Rank " + arguments[2] + " already has the following permission: " + arguments[3]);
 								}
 								else
 								{
-									permissions.add(arguments[3]);
+									PermissionsManager.getRankPermissions(arguments[2]).add(arguments[3]);
 									
-									RanksFile.getFile().getConfiguration().set("tmcpermissions.ranks." + arguments[2] + ".permissions", permissions);
+									RanksFile.getFile().getConfiguration().set("tmcpermissions.ranks." + arguments[2] + ".permissions", PermissionsManager.getRankPermissions(arguments[2]));
 									RanksFile.getFile().saveConfiguration();
 									
 									PermissionsManager.updatePermissions();
@@ -188,9 +184,7 @@ public class TMCPermissionsCommand implements CommandExecutor
 						{
 							if (RankManager.rankExists(arguments[2]))
 							{
-								List<String> permissions = RanksFile.getFile().getConfiguration().getStringList("tmcpermissions.ranks." + arguments[2] + ".permissions");
-								
-								if (!permissions.contains(arguments[3]))
+								if (!PermissionsManager.getRankPermissions(arguments[2]).contains(arguments[3]))
 								{
 									player.sendMessage(ChatColor.RED + "Rank " + arguments[2] + " does not have the following permission: " + arguments[3]);
 								}
@@ -198,9 +192,9 @@ public class TMCPermissionsCommand implements CommandExecutor
 								{
 									PermissionsManager.removePermission(arguments[3]);
 									
-									permissions.remove(arguments[3]);
+									PermissionsManager.getRankPermissions(arguments[2]).remove(arguments[3]);
 									
-									RanksFile.getFile().getConfiguration().set("tmcpermissions.ranks." + arguments[2] + ".permissions", permissions);
+									RanksFile.getFile().getConfiguration().set("tmcpermissions.ranks." + arguments[2] + ".permissions", PermissionsManager.getRankPermissions(arguments[2]));
 									RanksFile.getFile().saveConfiguration();
 									
 									player.sendMessage(ChatColor.GRAY + "You have " + ChatColor.RED + "removed " + ChatColor.GRAY + "the following permission to rank" + RankManager.getRankColor(arguments[2]) + ChatColor.DARK_GRAY + ": " + ChatColor.YELLOW + arguments[3]);
